@@ -1,0 +1,25 @@
+{
+  "name": "cyril-bochet/yousign-api-client",
+  "description": "API client for Yousign · French electronic signature solution.\n",
+  "type": "library",
+  "license": [
+    "MIT"
+  ],
+  "authors": [
+    {
+      "name": "Cyril Bochet",
+      "email": "bochet66@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=7.4.0",
+    "ext-json": "*",
+    "ext-curl": "*"
+  },
+  "autoload": {
+    "psr-0": {
+      "YousignApiClient": "src/"
+    }
+  }
+}
