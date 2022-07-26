@@ -1,6 +1,6 @@
 {
   "name": "cyril-bochet/yousign-api-client",
-  "description": "API client for Yousign · French electronic signature solution.\n",
+  "description": "API client for Yousign · French eSignature solution.\n",
   "type": "library",
   "license": [
     "MIT"
