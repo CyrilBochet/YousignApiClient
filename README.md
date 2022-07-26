@@ -2,7 +2,7 @@
 
 > Client API pour <a target="_blank" href="https://yousign.com/fr-fr"> Yousign</a> · solution de signature électronique française. 
 >
->API client for <a target="_blank" href="https://yousign.com/fr-fr"> Yousign</a> · French electronic signature solution.
+>API client for <a target="_blank" href="https://yousign.com/fr-fr"> Yousign</a> · French eSignature solution.
 
 ### Sommaire
 
