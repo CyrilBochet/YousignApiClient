@@ -81,7 +81,7 @@ function procedureSimpleMail($apikey)
 
 
 }
-
+procedureAvancee($apikey);
 function procedureAvancee($apikey)
 {
     $client = new YousignApiClient($apikey, 'test');
@@ -95,7 +95,27 @@ function procedureAvancee($apikey)
     );
 
     // Création de la procédure
-    $client->advancedProcedureCreate($parameters);
+
+    $emails = [
+        "member.started" => array(
+            "subject" => "Hey! You are invited to sign!",
+            "message" => "Hello <tag data-tag-type=\"string\" data-tag-name=\"recipient.firstname\"></tag> <tag data-tag-type=\"string\" data-tag-name=\"recipient.lastname\"></tag>, <br><br> You have ben invited to sign a document, please click on the following button to read it: <tag data-tag-type=\"button\" data-tag-name=\"url\" data-tag-title=\"Access to documents\">Access to documents</tag>",
+            "to" => ["@member"]),
+        "procedure.started" => array(
+            "subject" => "John, created a procedure your API have.",
+            "message" => "The content of this email is totally awesome.",
+            "to" => ["@creator", "@members"])
+    ];
+    $webhooks = [
+        "member.started" => array(
+            "url" => "https://testyousign.requestcatcher.com",
+            "method" => "POST",
+            "headers" => array(
+                "X-Custom-Header" => 'test'
+            )),
+    ];
+
+    $client->advancedProcedureCreate($parameters, $emails, $webhooks);
 
     $filePath = 'test.pdf';
     $fileName = 'test.pdf';
@@ -148,7 +168,7 @@ function procedureAvanceeWebhook($apikey)
 
     // Création de la procédure
 
-    $client->advancedProcedureCreate($parameters, true,['member.started',' member.finished'],  'POST', 'https://testyousign.requestcatcher.com', 'test');
+    $client->advancedProcedureCreate($parameters, true, ['member.started', ' member.finished'], 'POST', 'https://testyousign.requestcatcher.com', 'test');
 
     $filePath = 'test.pdf';
     $fileName = 'test.pdf';
@@ -187,7 +207,8 @@ function procedureAvanceeWebhook($apikey)
     $client->advancedProcedureStart();
 }
 
-function utilisateurs($apikey){
+function utilisateurs($apikey)
+{
 
     $client = new YousignApiClient($apikey, 'test');
     $client->getUsers();

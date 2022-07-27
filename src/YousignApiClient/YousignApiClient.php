@@ -275,31 +275,37 @@ class YousignApiClient
     }
 
     /**
-     * $triggers = "procedure.started" or "procedure.finished" or "procedure.refused" or "member.started" or "member.finished"
      * @param $parameters
-     * @param bool $webhook
-     * @param array $triggers
-     * @param string $webhookMethod
-     * @param string $webhookUrl
-     * @param string $webhookHeader
+     * @param array|null $emails
+     * @param array $webhooks
      * @return bool|string
      */
-    public function advancedProcedureCreate($parameters, bool $webhook = false, array $triggers = ['member.started', ' member.finished'], string $webhookMethod = '', string $webhookUrl = '', string $webhookHeader = '')
+    public function advancedProcedureCreate($parameters, array $emails = [], array $webhooks = [])
     {
         $config = array();
 
-        if ($webhook && !empty($triggers)) {
+        if (!empty($emails)) {
+            foreach ($emails as $trigger => $email) {
 
-            foreach ($triggers as $trigger) {
-
-                $config['webhook'][$trigger][] = array(
-                    "url" => $webhookUrl,
-                    "method" => $webhookMethod,
-                    "headers" => array(
-                        "X-Custom-Header" => $webhookHeader
-                    )
+                $config['email'][$trigger][] = array(
+                    "subject" => $email["subject"],
+                    "message" => $email["message"],
+                    "to" => $email["to"]
                 );
             }
+        }
+
+        if (!empty($webhooks)) {
+            foreach ($webhooks as $trigger => $webhook) {
+                $config['webhook'][$trigger][] = array(
+                    "url" => $webhook["url"],
+                    "method" => $webhook["method"],
+                    "headers" => $webhook["headers"],
+                );
+            }
+        }
+
+        if (!empty($config)) {
             $parameters['config'] = $config;
         }
 
@@ -346,8 +352,6 @@ class YousignApiClient
      */
     public function advancedProcedureAddFile(string $filePath, string $fileName, string $type = 'signable')
     {
-
-
         $data = file_get_contents($filePath);
         $b64Doc = base64_encode($data);
 
