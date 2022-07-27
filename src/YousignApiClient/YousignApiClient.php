@@ -91,95 +91,6 @@ class YousignApiClient
     }
 
     /**
-     * @param string $fileId
-     * @param bool $binary
-     * @return bool|Exception|string
-     */
-    public function downloadFile(string $fileId, bool $binary = true)
-    {
-        $curl = curl_init();
-        if ($binary) {
-            // download the file in binary
-            $url = $this->apiBaseUrlWslash . $fileId . "/download?alt=media";
-        } else {
-            // base64
-            $url = $this->apiBaseUrlWslash . $fileId . "/download";
-        }
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "GET",
-            CURLOPT_HTTPHEADER => array(
-                "Authorization: Bearer " . $this->getApikey(),
-                "Content-Type: application/json"
-            ),
-        ));
-
-        $response = curl_exec($curl);
-        $error = curl_error($curl);
-
-        curl_close($curl);
-
-        if ($error) {
-            return new Exception("cURL error  : " . $error);
-        }
-
-        return $response;
-    }
-
-    /**
-     * @param $post
-     * @param $action
-     * @param $method
-     * @return mixed|string
-     */
-    public function apiRequest($post, $action, $method)
-    {
-
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-            CURLOPT_URL => $this->apiBaseUrl . $action,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_HTTPHEADER => [
-                "Authorization: Bearer " . $this->getApikey(),
-                "Content-Type: application/json"
-            ],
-        ]);
-
-        if ($method === 'POST') {
-            $post = $this->json_encode($post);
-            curl_setopt($curl, CURLOPT_POST, 1);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
-        }
-
-        $result = curl_exec($curl);
-        $error = curl_error($curl);
-        curl_close($curl);
-
-        if ($error) {
-            return new Exception("cURL error  : " . $error);
-        }
-        return $this->json_decode($result);
-
-    }
-
-    /**
-     * @return mixed|string
-     */
-    public function getUsers()
-    {
-        return $this->apiRequest(array(), 'users', 'GET');
-    }
-
-    /**
      * @param $filePath
      * @return Exception|YousignApiClient
      */
@@ -275,12 +186,12 @@ class YousignApiClient
     }
 
     /**
-     * @param $parameters
+     * @param array $parameters
      * @param array|null $emails
      * @param array $webhooks
      * @return bool|string
      */
-    public function advancedProcedureCreate($parameters, array $emails = [], array $webhooks = [])
+    public function newAdvancedProcedure(array $parameters, array $emails = [], array $webhooks = [])
     {
         $config = array();
 
@@ -544,77 +455,6 @@ class YousignApiClient
     }
 
     /**
-     * @param array $members
-     * @param string $procedureName
-     * @param string $procedureDescription
-     * @param string $mailSubject
-     * @param string $mailMessage
-     * @param array $mailTo
-     * @return bool|string
-     */
-    public function addMemberAndTriggerMailAlert(array $members = [], string $procedureName = '', string $procedureDescription = '', string $mailSubject, string $mailMessage, array $mailTo = array("@creator", "@members"))
-    {
-        $curl = curl_init();
-
-        $config = array();
-
-        $config["email"] =
-            array(
-                "member.started" => array(
-                    array(
-                        "subject" => $mailSubject,
-                        "message" => $mailMessage,
-                        "to" => array("@member")
-                    )
-                ),
-                "procedure.started" => array(
-                    array(
-                        "subject" => $mailSubject,
-                        "message" => $mailMessage,
-                        "to" => $mailTo
-                    )
-                )
-            );
-
-        $body = array(
-            "name" => $procedureName,
-            "description" => $procedureDescription,
-            "members" => $members,
-            "config" => $config
-
-        );
-
-        $param = $this->json_encode($body);
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => $this->apiBaseUrl . "procedures",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => $param,
-            CURLOPT_HTTPHEADER => array(
-                "Authorization: Bearer " . $this->getApikey(),
-                "Content-Type: application/json"
-            ),
-        ));
-
-        $response = curl_exec($curl);
-        $error = curl_error($curl);
-
-        curl_close($curl);
-
-        if ($error) {
-            return new Exception("cURL error  : " . $error);
-        }
-
-        return $response;
-    }
-
-    /**
      * @param $json
      * @return Exception|mixed
      */
@@ -643,4 +483,94 @@ class YousignApiClient
 
         return $json;
     }
+
+    /**
+     * @param array $post
+     * @param string $action
+     * @param string $method
+     * @return mixed|string
+     */
+    public function apiRequest(array $post, string $action, string $method)
+    {
+
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $this->apiBaseUrl . $action,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTPHEADER => [
+                "Authorization: Bearer " . $this->getApikey(),
+                "Content-Type: application/json"
+            ],
+        ]);
+
+        if ($method === 'POST') {
+            $post = $this->json_encode($post);
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
+        }
+
+        $result = curl_exec($curl);
+        $error = curl_error($curl);
+        curl_close($curl);
+
+        if ($error) {
+            return new Exception("cURL error  : " . $error);
+        }
+        return $this->json_decode($result);
+
+    }
+
+    /**
+     * @return mixed|string
+     */
+    public function getUsers()
+    {
+        return $this->apiRequest(array(), 'users', 'GET');
+    }
+
+    /**
+     * @param string $fileId
+     * @param bool $binary
+     * @return bool|Exception|string
+     */
+    public function downloadFile(string $fileId, bool $binary = true)
+    {
+        $curl = curl_init();
+        if ($binary) {
+            // download the file in binary
+            $url = $this->apiBaseUrlWslash . $fileId . "/download?alt=media";
+        } else {
+            // base64
+            $url = $this->apiBaseUrlWslash . $fileId . "/download";
+        }
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => false,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "GET",
+            CURLOPT_HTTPHEADER => array(
+                "Authorization: Bearer " . $this->getApikey(),
+                "Content-Type: application/json"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $error = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($error) {
+            return new Exception("cURL error  : " . $error);
+        }
+
+        return $response;
+    }
+
 }

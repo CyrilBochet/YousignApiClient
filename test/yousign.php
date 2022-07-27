@@ -15,7 +15,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use YousignApiClient\YousignApiClient;
 
 $apikey = getenv('API_KEY');
-procedureSimple($apikey);
+
 function procedureSimple($apikey)
 {
     $client = new YousignApiClient($apikey, 'dev');
@@ -46,43 +46,7 @@ function procedureSimple($apikey)
     $client->addMembersToProcedure($members, 'Procédure test', 'Signature test.');
 }
 
-function procedureSimpleMail($apikey)
-{
-    //Procédure simple + mail
-    $client = new YousignApiClient($apikey, 'dev');
-
-    // Nouvelle procédure
-    $client->newProcedure('test.pdf');
-
-    $members = array(
-        array(
-            'firstname' => 'Cyril',
-            'lastname' => 'Bochet',
-            'email' => getenv('EMAIL'),
-            'phone' => getenv('TEL'),
-            'fileObjects' => array(
-                array(
-                    'file' => $client->getfileId(),
-                    'page' => 1,
-                    'position' => "202,205,389,284",
-                    'mention' => "Lu et approuvé",
-                    "mention2" => ""
-                )
-            )
-            // Autre membre, etc.
-        )
-    );
-
-    $mailSubject = "Vous êtes invité à signer électroniquement un document !";
-    $mailMessage = "Bonjour <tag data-tag-type=\"string\" data-tag-name=\"recipient.firstname\"></tag> <tag data-tag-type=\"string\" data-tag-name=\"recipient.lastname\"></tag>, <br><br> Vous avez été invité à signer un document, veuillez cliquer sur le bouton suivant pour le lire : <tag data-tag-type=\"button\" data-tag-name=\"url\" data-tag-title=\"Accéder aux document\">Accéder aux document</tag>";
-    $mailTo = array("@creator", "@members");
-
-    $client->addMemberAndTriggerMailAlert($members, 'Procédure simple + mail', 'Procédure simple + mail', $mailSubject, $mailMessage, $mailTo);
-
-
-}
-procedureAvancee($apikey);
-function procedureAvancee($apikey)
+function procedureAvanceeComplete($apikey)
 {
     $client = new YousignApiClient($apikey, 'test');
 
@@ -115,7 +79,7 @@ function procedureAvancee($apikey)
             )),
     ];
 
-    $client->advancedProcedureCreate($parameters, $emails, $webhooks);
+    $client->newAdvancedProcedure($parameters, $emails, $webhooks);
 
     $filePath = 'test.pdf';
     $fileName = 'test.pdf';
@@ -154,7 +118,7 @@ function procedureAvancee($apikey)
     $client->advancedProcedureStart();
 }
 
-function procedureAvanceeWebhook($apikey)
+function procedureAvanceeWebhookSeulement($apikey)
 {
     $client = new YousignApiClient($apikey, 'test');
 
@@ -166,9 +130,19 @@ function procedureAvanceeWebhook($apikey)
         'start' => false
     );
 
-    // Création de la procédure
+    // Création des webhooks
+    $webhooks = [
+        "member.started" => array(
+            "url" => "https://testyousign.requestcatcher.com",
+            "method" => "POST",
+            "headers" => array(
+                "X-Custom-Header" => 'test'
+            )),
+        //etc.
+    ];
 
-    $client->advancedProcedureCreate($parameters, true, ['member.started', ' member.finished'], 'POST', 'https://testyousign.requestcatcher.com', 'test');
+    // Création de la procédure
+    $client->newAdvancedProcedure($parameters, array(), $webhooks);
 
     $filePath = 'test.pdf';
     $fileName = 'test.pdf';
