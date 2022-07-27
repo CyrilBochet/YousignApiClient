@@ -275,38 +275,31 @@ class YousignApiClient
     }
 
     /**
+     * $triggers = "procedure.started" or "procedure.finished" or "procedure.refused" or "member.started" or "member.finished"
      * @param $parameters
      * @param bool $webhook
+     * @param array $triggers
      * @param string $webhookMethod
      * @param string $webhookUrl
      * @param string $webhookHeader
      * @return bool|string
      */
-    public function advancedProcedureCreate($parameters, bool $webhook = false, string $webhookMethod = '', string $webhookUrl = '', string $webhookHeader = '')
+    public function advancedProcedureCreate($parameters, bool $webhook = false, array $triggers = ['member.started', ' member.finished'], string $webhookMethod = '', string $webhookUrl = '', string $webhookHeader = '')
     {
         $config = array();
 
-        if ($webhook) {
-            $config["webhook"] = array(
-                "member.finished" => array(
-                    array(
-                        "url" => $webhookUrl,
-                        "method" => $webhookMethod,
-                        "headers" => array(
-                            "X-Custom-Header" => $webhookHeader
-                        )
+        if ($webhook && !empty($triggers)) {
+
+            foreach ($triggers as $trigger) {
+
+                $config['webhook'][$trigger][] = array(
+                    "url" => $webhookUrl,
+                    "method" => $webhookMethod,
+                    "headers" => array(
+                        "X-Custom-Header" => $webhookHeader
                     )
-                ),
-                "member.started" => array(
-                    array(
-                        "url" => $webhookUrl,
-                        "method" => $webhookMethod,
-                        "headers" => array(
-                            "X-Custom-Header" => $webhookHeader
-                        )
-                    )
-                )
-            );
+                );
+            }
             $parameters['config'] = $config;
         }
 

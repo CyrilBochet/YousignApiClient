@@ -148,7 +148,7 @@ function procedureAvanceeWebhook($apikey)
 
     // Création de la procédure
 
-    $client->advancedProcedureCreate($parameters, true, 'POST', 'https://testyousign.requestcatcher.com', 'test');
+    $client->advancedProcedureCreate($parameters, true,['member.started',' member.finished'],  'POST', 'https://testyousign.requestcatcher.com', 'test');
 
     $filePath = 'test.pdf';
     $fileName = 'test.pdf';

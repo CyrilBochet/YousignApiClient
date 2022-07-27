@@ -215,7 +215,11 @@ $webhookMethod = 'POST';
 $webhookUrl = 'https://example.com/webhook-yousign';
 $webhookHeader = 'test';
 
-$client->advancedProcedureCreate($parameters, $webhook, $webhookMethod, $webhookUrl, $webhookHeader);
+// Voici tous les déclencheurs disponibles, à vous de choisir ceux qui vous intéressent.
+// Here are all the triggers available, it's up to you to choose the ones that interest you.
+$triggers = ["procedure.started", "procedure.finished", "procedure.refused", "member.started", "member.finished"];
+
+$client->advancedProcedureCreate($parameters, $webhook, $triggers, $webhookMethod, $webhookUrl, $webhookHeader);
 
 $filePath = 'file.pdf';
 $fileName = 'file.pdf';
