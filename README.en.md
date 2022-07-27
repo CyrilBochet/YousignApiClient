@@ -1,34 +1,34 @@
 ## CyrilBochet/YousignApiClient
 
 ### README translation
--   [English](README.en.md)
+- [Français](README.md)
 
-> Client API pour <a target="_blank" href="https://yousign.com/fr-fr"> Yousign</a> · solution de signature électronique française. 
+>API client for <a target="_blank" href="https://yousign.com/fr-fr"> Yousign</a> · French eSignature solution.
 
-### Sommaire
+### Summary
 
-- [Procédure simple](#simple-procedure)
-- [Procédure avancée](#advanced-procedure)
-- [Téléchargement d'un fichier](#download-file)
-- [Récupérer les utilisateurs](#users)
-- [Gestion des tags (message du mail)](#tags-management)
-- [Liens utiles](#useful-links)
+- [Simple procedure](#simple-procedure)
+- [Advanced procedure](#advanced-procedure)
+- [Downloading a file](#download-file)
+- [Get users](#users)
+- [Tags management (email message)](#tags-management)
+- [Useful links](#useful-links)
 
 <div id='simple-procedure'/></div>
 
-### Procédure simple
+### Simple procedure
 
  ```PHP
 use YousignApiClient\YousignApiClient;
 
-// Votre clé API
+// Your API key
 $apikey = 'API_KEY';
 $env = 'test';
 
 $client = new YousignApiClient($apikey, $env);
 
 
-// Nouvelle procédure
+// New procedure
 $client->newProcedure('test.pdf');
 
 $members = array(
@@ -46,7 +46,7 @@ $members = array(
                 "mention2" => ""
             )
         )
-        // Autre membre, etc.
+        // Other member, etc.
     )
 );
 
@@ -54,36 +54,36 @@ $client->addMembersToProcedure($members, 'Procédure test', 'Signature test.');
 ```
 <div id='advanced-procedure'/></div>
 
-### Procédure avancée
+### Advanced procedure
 
-En créant une procédure avancée vous pouvez utiliser des <a target="_blank" href="https://fr.wikipedia.org/wiki/Webhook"> webhooks</a>. <br>
-> Exemple : Yousign peut vous envoyer une notifcation webhook lorsqu'une personne signe votre document.
+By creating an advanced procedure you can use <a target="_blank" href="https://en.wikipedia.org/wiki/Webhook"> webhooks</a>.
+> Example : Yousign can send a webhook notification when a person signs your document.
 
-Vous pouvez mettre en place une URL qui va traiter la notification envoyée par Yousign. <br>
-Ensuite vous traiter la requête selon vos besoins. (mail, enregistrement du statut de la procédure, etc.) <br>
-Une procédure avancée vous permet également de créer des <b>notifications mails</b>. <br>
+You can set up an URL that will process the notification sent by Yousign. <br>
+Then you process the request as needed. (email, saving the procedure status, etc.) <br>
 
->Exemple : vous pouvez créer une notification lorsqu'une personne refuse de signer votre document. (déclencheur : "procedure.refused")<br>
+An advanced procedure also allows you to create <b>email notifications</b>.
+
+>Example : you can create a notification when someone refuses to sign your document. (trigger: "procedure.refused")
 
 ```PHP
 use YousignApiClient\YousignApiClient;
 
-// Votre clé API
+// Your API key
 $apikey = 'API_KEY';
 $env = 'test';
 
 $client = new YousignApiClient($apikey, $env);
 
-
-// Paramètres de la procédure
+// Procedure parameters
 $parameters = array(
     'name' => "Ma procédure avancée",
     'description' => "Création d'une procédure avancée.",
     'start' => false
 );
 
-// Création de la procédure
-// Liste des déclencheurs (mails et webhooks) : "procedure.started", "procedure.finished", "procedure.refused", "member.started", "member.finished"
+// Procedure creation
+// Trigger list (emails and webhooks): "procedure.started", "procedure.finished", "procedure.refused", "member.started", "member.finished"
     
     $emails = [
         "member.started" => array(
@@ -114,10 +114,10 @@ $filePath = 'file.pdf';
 $fileName = 'file.pdf';
 
 
-// On ajoute le fichier à signer
+// We add the file to sign
 $client->advancedProcedureAddFile($filePath, $fileName);
 
-// On définit le·s différent·s emplacement·s de signature
+// We define the signature locations
 $emplacementsSignature = array(
   [
     'position' => '64,71,245,142',
@@ -135,29 +135,30 @@ $emplacementsSignature = array(
   ]
 );
 
-// On ajoute le·s membre·s à la procédure
+// We add the member to the procedure
 $member = $client->advancedProcedureAddMember($prenom, $nom, $mail, $tel, $type);
 
-// On ajoute les emplacements de signature à la procédure
+// We add the signature locations to the procedure
 foreach ($emplacementsSignature as $emplacement) {
    $client->advancedProcedureFileObject($emplacement["position"], $emplacement["page"], $emplacement["mention"], $emplacement["mention2"], $emplacement["reason"]);
 }
 
-// On lance la procédure
+// We start the procedure
 $client->advancedProcedureStart();
 ```
 
 <div id='download-file'/></div>
 
-### Téléchargement d'un fichier
+### Downloading a file
 
 ```PHP
-// Pour l'exemple je télécharge le fichier directement après avoir lancé la procédure, mais en utilisant les webhooks vous pouvez le télécharger à n'importe quel moment.
-// le fichier que l'on souhaite télécharger
+// In this example I download the file directly after starting the procedure, but using webhooks you can download it anytime you want.
+
+// the file we want to download
 $file = $client->advancedProcedureAddFile($filePath, $fileName);
 $client->advancedProcedureStart();
 
-// On récupère le fichier en base64 ou en binaire
+// We can get the file in base64 or binary
 $binary=false;
 $client->downloadFile($file['id'], $binary);
 
@@ -165,14 +166,14 @@ $client->downloadFile($file['id'], $binary);
 
 <div id='users'/></div>
 
-### Récupérer les utilisateurs
+### Get users
 
 ```PHP
 $client->getUsers();
 ```
 <div id='tags-management'/></div>
 
-### Gestion des tags (message du mail)
+### Tags management (email message)
 <table>
    <thead>
       <tr>
@@ -211,9 +212,9 @@ $client->getUsers();
 
 <div id='useful-links'/></div>
 
-### Liens utiles / Useful links
+### Useful links
 
-> Pour connaitre les coordonnées d'un emplacement de signature : https://placeit.yousign.fr
+> To get the coordinates of a signature location: https://placeit.yousign.fr
 
-> Documentation complète de l'API Yousign : https://dev.yousign.com
+> Complete Yousign API documentation here: https://dev.yousign.com
 
