@@ -211,7 +211,7 @@ $client->getUsers();
 
 <div id='useful-links'/></div>
 
-### Liens utiles / Useful links
+### Liens utiles
 
 > Pour connaitre les coordonnées d'un emplacement de signature : https://placeit.yousign.fr
 
