@@ -320,9 +320,9 @@ class YousignApiClient
     {
 
         $member = array(
-            "firstname" => $firstname,
-            "lastname" => $lastname,
-            "email" => $email,
+            "firstname" => trim($firstname),
+            "lastname" => trim($lastname),
+            "email" => trim($email),
             "phone" => $phone,
             "type" => $type,
             "procedure" => $this->idAdvancedProcedure
