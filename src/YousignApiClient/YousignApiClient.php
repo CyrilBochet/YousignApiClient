@@ -18,13 +18,13 @@ use JsonException;
 
 class YousignApiClient
 {
-    private string $apikey;
+    private string $apikey = '';
     private string $apiBaseUrl;
     private string $apiBaseUrlWslash;
-    private string $fileId;
-    private string $idAdvancedProcedure;
-    private string $member;
-    private string $fileobject;
+    private string $fileId = '';
+    private string $idAdvancedProcedure = '';
+    private string $member = '';
+    private string $fileobject = '';
 
     /**
      * @param $apikey
